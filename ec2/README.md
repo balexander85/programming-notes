@@ -1,6 +1,10 @@
 # Setting up React App on EC2 Instance in AWS
 
-Here are the general steps to set up a production-ready React app on your EC2 instance.
+Welcome to the guide on setting up a production-ready React app on an Amazon Elastic Compute Cloud (EC2) instance within Amazon Web Services (AWS). Whether you're a developer looking to deploy your React application or simply curious about hosting web applications on AWS, this step-by-step tutorial will walk you through the process.
+
+By the end of this guide, you will have your React app up and running on an EC2 instance, accessible to users on the internet. We'll cover everything from creating your EC2 instance to configuring Nginx as a reverse proxy and using pm2 for process management.
+
+Let's get started on your journey to deploying your React app to the cloud!
 
 ## Create an Instance in AWS Console
 
@@ -72,7 +76,7 @@ sudo vi /etc/nginx/conf.d/react-resume-app.conf
 ```
 
 Add the following configuration (make sure to adjust paths and server_name as needed):
-```
+```bash
 server {
     listen 80;
     server_name 54.208.141.83; # Replace with your domain name or public IP address
@@ -95,7 +99,7 @@ sudo ln -s /etc/nginx/conf.d/react-resume-app.conf /etc/nginx/sites-enabled/
 ```
 
 #### Test Nginx configuration:
-```
+```bash
 sudo nginx -t
 ```
 
@@ -107,20 +111,26 @@ sudo systemctl reload nginx
 sudo systemctl enable nginx
 ```
 
-## Now setup pm2
-```
-sudo npm install pm2 -g
-serve -s build -l 3000 &
+## Setup pm2
+
+A commonly used tool for managing Node.js processes is pm2. pm2 provides more advanced process management features, including automatic restarts on crashes and better log management. To use pm2:
+> **Note**: If you haven't already, install pm2 globally. `sudo npm install pm2 -g`
+
+```bash
+# Start your React app using serve with the following command.
+serve -s build -l 3000 & # The & at the end of the command runs serve in the background.
+# Now, you can use pm2 to manage the serve process.
 pm2 start "serve -s build -l 3000" --name "react-resume-app"
+# First, you need to save your current PM2 process list, which includes your application, so that it can be restored after a reboot.
 pm2 save
-pm2 resurrect # I don't know that this is needed
+# Finally, restart PM2 with the saved processes
+pm2 resurrect
 ```
 
-```
+Next, generate a startup script:
+```bash
 pm2 startup # copy sudo command
-```
-This command will provide you with a command to run (usually sudo), which will create a startup script to start PM2 at boot. Run the command provided.
-
-```
+# This command will provide you with a command to run (usually sudo),
+# which will create a startup script to start PM2 at boot. Run the command provided.
 sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ec2-user --hp /home/ec2-user
 ```
