@@ -34,7 +34,8 @@ sudo npm install -g serve
 
 ## Install Project
 
-> **Note**: You will not need to do this if your project is public
+#### Copy ssh key to github (optional)
+**Note**: You will not need to do this if your project is public
 ```bash
 ssh-keygen
 cat .ssh/id_rsa.pub # paste this value to git repo https://github.com/settings/ssh/new
@@ -86,8 +87,6 @@ server {
 	proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        #root /home/ec2-user/react-resume-app/build; # Replace with the actual path to your website files
-        #index index.html; # Specify the default index file (e.g., index.html)
     }
 }
 ```
