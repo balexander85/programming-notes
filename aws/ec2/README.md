@@ -80,7 +80,7 @@ Add the following configuration (make sure to adjust paths and server_name as ne
 ```bash
 server {
     listen 80;
-    server_name 54.208.141.83; # Replace with your domain name or public IP address
+    server_name x.x.x.x; # Replace with your domain name or public IP address
 
     location / {
         proxy_pass http://localhost:3000;
