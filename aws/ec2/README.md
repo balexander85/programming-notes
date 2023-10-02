@@ -23,6 +23,11 @@ Let's get started on your journey to deploying your React app to the cloud!
 ## Install Dependencies
 To set up your EC2 instance for hosting a React app, you'll need to install a few dependencies. You can do this by running the following commands:
 ```bash
+sudo dnf update
+sudo dnf install git nodejs npm nginx cronie -y
+```
+or use yum
+```bash
 sudo yum check-update
 sudo yum update
 sudo yum install git nodejs npm nginx -y
@@ -34,7 +39,7 @@ sudo npm install -g serve
 
 ## Install Project
 
-#### Copy ssh key to github (optional)
+#### Copy ssh key to gitHub (optional)
 **Note**: You will not need to do this if your project is public
 ```bash
 ssh-keygen
@@ -67,6 +72,7 @@ You can use a Node.js-based web server like serve or express to serve your React
 serve -s build -l 3000
 ```
 You will not be able to access web app until after setting up Nginx or maybe opening port 3000 on your Ec2 instance.
+After verifying page is displayed you can stop the `serve` app running and will start up again later on.
 
 ## Setup Nginx
 > **Note**: If you haven't already, install nginx. `sudo yum install nginx`
@@ -84,7 +90,7 @@ server {
 
     location / {
         proxy_pass http://localhost:3000;
-	proxy_set_header Host $host;
+        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
@@ -132,4 +138,89 @@ pm2 startup # copy sudo command
 # This command will provide you with a command to run (usually sudo),
 # which will create a startup script to start PM2 at boot. Run the command provided.
 sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ec2-user --hp /home/ec2-user
+```
+
+## Setting up SSL
+In order to get HTTPS working for your site you will need to get certificates
+and update the nginx configuration. Installing `certbot` via python with virtual environments
+because I could not install via the recommended way via `snap`.
+
+#### Update configuration file for your React app in the
+```bash
+sudo vi /etc/nginx/conf.d/react-resume-app.conf
+```
+Replace you IP with the domain name
+```bash
+server {
+    listen 80;
+    server_name your-domain.com www.your-domain.com; # Replace with your domain name
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+#### Test Nginx configuration:
+```bash
+sudo nginx -t
+```
+
+#### Reload Nginx
+```
+sudo systemctl reload nginx
+```
+
+#### Install Certbot
+```bash
+# Create virtual environment
+python3 -m venv ~/certbot
+# Activate virtual environment
+source ~/certbot/bin/activate
+# Upgrade pip
+pip install --upgrade pip
+# Install certbot and dependency
+pip install certbot certbot-nginx
+# before doing this next step make sure your Domain's DNS
+# is pointed to your Ec2 instance
+sudo /home/ec2-user/certbot/bin/certbot --nginx -d your-domain.com -d www.your-domain.com
+```
+You can see after certbot is run that the nginx configuration is updated:
+```bash
+server {
+    server_name your-domain.com www.your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+	proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+server {
+    if ($host = www.your-domain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = your-domain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name your-domain.com www.your-domain.com;
+    return 404; # managed by Certbot
+}
 ```
