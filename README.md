@@ -1,7 +1,5 @@
 # programming-notes
 
-Welcome to the Programming Notes repository! This collection serves as a comprehensive reference for various technical setups and insightful notes related to programming. As a work in progress, it currently functions as a skeleton structure where I'm actively collating and organizing my programming-related notes.
-
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -9,7 +7,7 @@ Welcome to the Programming Notes repository! This collection serves as a compreh
 
 ## Introduction
 
-Welcome to the Programming Notes repository! This is my personal collection of technical setup guides and helpful notes related to programming. As I collate my thoughts and insights, this repository serves as a skeleton structure for organizing my programming-related notes.
+This is my personal collection of technical setup guides and helpful notes related to programming. As I collate my thoughts and insights, this repository serves as a skeleton structure for organizing my programming-related notes.
 
 ## Contents
 
