@@ -3,8 +3,9 @@
 
 ## Creating app with Typescript template
 ```shell
-npx create-react-app timeline-app --template typescript
+npx create-react-app app-name --template typescript
 ```
+Replace _app-name_ with name of the app.
 
 
 ## Console logs for components (inside .tsx files)
