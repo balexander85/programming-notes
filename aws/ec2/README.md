@@ -149,7 +149,7 @@ because I could not install via the recommended way via `snap`.
 ```bash
 sudo vi /etc/nginx/conf.d/react-resume-app.conf
 ```
-Replace you IP with the domain name
+Replace `your-domain.com` with the name of your domain
 ```bash
 server {
     listen 80;
