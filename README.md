@@ -13,6 +13,8 @@ This is my personal collection of technical setup guides and helpful notes relat
 
 The repository currently covers a broad spectrum of programming-related subjects, including but not limited to:
 
-* [Setting up React website in AWS](https://github.com/balexander85/programming-notes/blob/main/aws/ec2/README.md)
+* [aws](./aws/README.md)
+  * [Setting up React website in AWS](./aws/ec2/README.md)
+  * [Use an Amazon CloudFront distribution to serve a static website](./aws/s3/README.md)
 
 Please note that this repository is a work in progress, and more content will be added regularly as I continue to organize and expand my notes.
