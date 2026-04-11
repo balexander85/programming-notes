@@ -53,5 +53,12 @@ def sum_recursion_pythonic(numbers: List[int]) -> int:
     ]
 )
 def test_sum_functions(sum_function):
+    assert 4950 == sum_function(list(range(100)))
+    assert 100 == sum_function([1] * 100)
     assert 55 == sum_function([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     assert 5 == sum_function([10, -5])
+    assert 5 == sum_function([10, -5, 0])
+    assert 2 == sum_function([-1, -2, 3, 2])
+    assert 1 == sum_function([1])
+    assert 0 == sum_function([0] * 100)
+    assert 0 == sum_function([])
